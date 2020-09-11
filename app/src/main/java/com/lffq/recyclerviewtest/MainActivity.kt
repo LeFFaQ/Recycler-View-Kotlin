@@ -1,14 +1,16 @@
 package com.lffq.recyclerviewtest
 
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
@@ -21,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val layoutManager = GridLayoutManager(this, 2)
+        val layoutManager = LinearLayoutManager(this)
         recyclerView = findViewById(R.id.rv_images)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = layoutManager
@@ -37,9 +39,9 @@ class MainActivity : AppCompatActivity() {
     private inner class ImageGalleryAdapter(val context: Context, val sunsetPhotos: Array<SunsetPhoto>): RecyclerView.Adapter<ImageGalleryAdapter.MyViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageGalleryAdapter.MyViewHolder {
-            val context=parent.context
+            val context= parent.context
             val inflater = LayoutInflater.from(context)
-            val photoView = inflater.inflate(R.layout.item_image, parent, false)
+            val photoView = inflater.inflate(R.layout.item_image, parent, false) as LinearLayout
             return MyViewHolder(photoView)
         }
 
@@ -51,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                 .load(sunsetPhoto.url)
                 .placeholder(R.drawable.ic_launcher_foreground)
                 .error(R.drawable.ic_error)
+                .fit()
                 .into(imageView)
         }
 
@@ -60,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         inner class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-            var photoImageView: ImageView = itemView.findViewById(R.id.iv_photo)
+            var photoImageView = itemView.findViewById(R.id.iv_photo) as ImageView
 
             init {
                 itemView.setOnClickListener(this)
