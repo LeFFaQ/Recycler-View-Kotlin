@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">RecyclerViewTest</string>
+    <string name="ph_title"><![CDATA[Places in Singapore that\'ll make you believe you\'re in Hong Kong\'s Tsim Sha Tsui, Victoria Peak & Mongkok]]></string>
+    <string name="ph_author">Melissa Goh</string>
+    <string name="ph_date">2019-09-18 19:28:36 +0000</string>
 </resources>
