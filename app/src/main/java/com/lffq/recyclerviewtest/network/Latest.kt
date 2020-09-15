@@ -1,7 +1,10 @@
 package com.lffq.recyclerviewtest.network
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Latest(
 
 	@field:SerializedName("news")
@@ -9,8 +12,10 @@ data class Latest(
 
 	@field:SerializedName("status")
 	val status: String? = null
-)
+): Parcelable
 
+
+@Parcelize
 data class NewsItem(
 
 	@field:SerializedName("image")
@@ -39,4 +44,4 @@ data class NewsItem(
 
 	@field:SerializedName("url")
 	val url: String? = null
-)
+): Parcelable
