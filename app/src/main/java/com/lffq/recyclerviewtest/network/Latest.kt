@@ -4,6 +4,12 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
+/**
+ * Бизнес-логика
+ * (модель данных)
+ */
+
+
 @Parcelize
 data class Latest(
 

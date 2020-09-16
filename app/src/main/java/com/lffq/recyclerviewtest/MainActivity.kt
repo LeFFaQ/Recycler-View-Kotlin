@@ -17,12 +17,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lffq.recyclerviewtest.network.Latest
 import com.lffq.recyclerviewtest.network.SearchProvider
 import com.squareup.picasso.Callback
+import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.lang.Exception
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    /**
+     * MainActivity
+     * Здесь инициализируется Recyclerview сразу
+     */
+
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var imageGalleryAdapter: ImageGalleryAdapter
@@ -31,33 +39,37 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val layoutManager = LinearLayoutManager(this)
         recyclerView = findViewById(R.id.rv_images)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = layoutManager
-        imageGalleryAdapter = ImageGalleryAdapter(this, SunsetPhoto.getSunsetPhotos())
     }
 
     @SuppressLint("CheckResult")
     override fun onStart() {
         super.onStart()
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+        imageGalleryAdapter = ImageGalleryAdapter(this)
 
-        //Загрузка данных
-        val repository = SearchProvider.provideSearch()
-        repository.searchUsers("ru")
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe({ result ->
-                Log.d("123", "onStart: Запрос прошёл ${result.status}")
-                recyclerView.adapter = imageGalleryAdapter
-                imageGalleryAdapter.newsResult = result
-            }, { error ->
-                error.printStackTrace()
-            })
+        if (ImageGalleryAdapter(this).newsResult == null) {
+            //Загрузка данных
+            val repository = SearchProvider.provideSearch()
+            repository.searchUsers("ru")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                    Log.d("Загрузчик:", "Запрос прошёл (статус: ${result.status})")
+                    recyclerView.adapter = imageGalleryAdapter
+                    imageGalleryAdapter.newsResult = result
+                }, { error ->
+                    error.printStackTrace()
+                })
+        } else {
+            Log.d("Загрузчик:", "Запрос уже был выполнен")}
+
     }
 
 
-    private inner class ImageGalleryAdapter(val context: Context, val sunsetPhotos: Array<SunsetPhoto>): RecyclerView.Adapter<ImageGalleryAdapter.MyViewHolder>() {
+    private inner class ImageGalleryAdapter(val context: Context): RecyclerView.Adapter<ImageGalleryAdapter.MyViewHolder>() {
 
         var newsResult: Latest? = null
 
@@ -68,7 +80,6 @@ class MainActivity : AppCompatActivity() {
             return MyViewHolder(photoView)
         }
 
-        @SuppressLint("CheckResult")
         override fun onBindViewHolder(holder: ImageGalleryAdapter.MyViewHolder, position: Int) {
             val imageView = holder.imageTitle
 
@@ -84,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                     .load(newsResult?.news?.get(position)?.image)
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_error)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
                     .into(imageView, object : Callback {
                         override fun onSuccess() {
                             Log.d("Picasso", "onSuccess: the image in the position $position has been successfully loaded")
@@ -95,11 +107,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
             override fun getItemCount(): Int {
-            return sunsetPhotos.size
+                //Метод, возвращающий кол-во полученных элементов (новостей)
+                return newsResult?.news?.size!!
         }
 
         inner class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
+            //Элементы интерфейса
             var imageTitle = itemView.findViewById(R.id.iv_photo) as ImageView
             var textTitle = itemView.findViewById(R.id.iv_title) as TextView
             var textAuthor = itemView.findViewById(R.id.iv_author) as TextView
@@ -116,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                         putExtra(SunsetPhotoActivity.EXTRA_INFO, newsResult)
                     }
                     startActivity(intent)
-                    overridePendingTransition(R.anim.to_left, R.anim.alpha)
+                    overridePendingTransition(R.anim.to_left, R.anim.alpha) //Анимация изменения активити
                 }
             }
         }

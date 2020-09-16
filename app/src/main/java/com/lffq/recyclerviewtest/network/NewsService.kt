@@ -8,8 +8,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface NewsService {
 
+/**
+ * Бизнес-логика
+ * (Фабрика и методы запросов)
+ */
+
+interface NewsService {
     @GET("/v1/search")
     fun search(@Query("language") lang: String,
                @Query("category") category: String = "game",

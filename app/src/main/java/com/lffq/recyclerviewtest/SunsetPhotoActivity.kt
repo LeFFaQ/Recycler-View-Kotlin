@@ -12,8 +12,12 @@ import java.text.FieldPosition
 
 class SunsetPhotoActivity : AppCompatActivity() {
 
+    /**
+     * Активити новости
+     */
+
+
     companion object {
-        const val EXTRA_SUNSET_PHOTO = "SunsetPhotoActivity.EXTRA_SUNSET_PHOTO"
         const val EXTRA_INFO = "SunsetPhotoActivity.EXTRA_INFO"
         const val EXTRA_POSITION = "SunsetPhotoActivity.EXTRA_POSITION"
     }
